@@ -23,21 +23,24 @@ public class GeneticSearch implements SolutionType {
         	return population;
         }
         
+        private void mutate(CandidateSolution solution){
+        	Random rng = new Random();
+        	if(rng.nextInt(1000) < 10)
+        		solution.getRandomAssignment().randomizeAssignment();
+  	
+        }
+        
         private  Vector<CandidateSolution> matePopulation ( Vector<CandidateSolution> population, int numToMate) {
-        	/*
-        	 * Select members to mate  
-        	 * choose mates,
-        	 * produce offspring
-        	 * mutate
-        	 * */
+        	Vector<CandidateSolution> children = new Vector<CandidateSolution>();
         	Vector<CandidateSolution> alaphaMates = (Vector<CandidateSolution>) population.subList(0, numToMate) ;
         	for(CandidateSolution alpha : alaphaMates){
 	        	for (CandidateSolution popMember : population){
-	        		produceOffspring(alpha, popMember);
+	        		children.add(produceOffspring(alpha, popMember));
+	        		mutate(children.lastElement());
 	        	}
         	}
-        	
-        	return null;
+        	population.addAll(0, children);
+        	return population;
         }
         
         private CandidateSolution produceOffspring(CandidateSolution parent1,CandidateSolution  parent2 ){
@@ -52,7 +55,8 @@ public class GeneticSearch implements SolutionType {
         	for(int i = x; i < parent2.solutionSize(); i++){
         		child.replaceAssignmentAt(i, parent2.getAssignmentAtIndex(i-x));
         	}
-        	return child;}
+        	return child;
+        }
 
         public Vector<CandidateSolution> evaluateSolution(Vector<CandidateSolution> initial, int cut_off){
         	for(CandidateSolution cand: initial){
