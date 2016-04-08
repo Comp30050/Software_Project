@@ -21,6 +21,7 @@ public class GeneticSearch implements SolutionType {
         	return population;
         }
         
+<<<<<<< HEAD
         private  Vector<CandidateSolution> matePopulation ( Vector<CandidateSolution> population, int numToMate) {
         	/*
         	 * Select members to mate  
@@ -39,7 +40,20 @@ public class GeneticSearch implements SolutionType {
         }
         
         private CandidateSolution produceOffspring(CandidateSolution parent1,CandidateSolution  parent2 ){
-        	return null;
+        	return null;}
+
+        public Vector<CandidateSolution> evaluateSolution(Vector<CandidateSolution> initial, int cut_off){
+        	for(CandidateSolution cand: initial){
+        		for(CandidateSolution cand2: initial){
+        			if(cand2.getFitness() > cand.getFitness()){
+        				CandidateSolution temp;
+        				temp = cand;
+        				cand = cand2;
+        				cand2 = temp;
+        			}
+        		}
+        	}
+        	return (Vector<CandidateSolution>)initial.subList(0, cut_off);
         }
         
         public void improveSolution() {
