@@ -21,7 +21,6 @@ public class GeneticSearch implements SolutionType {
         	return population;
         }
         
-<<<<<<< HEAD
         private  Vector<CandidateSolution> matePopulation ( Vector<CandidateSolution> population, int numToMate) {
         	/*
         	 * Select members to mate  
