@@ -12,7 +12,7 @@ public class GeneticSearch implements SolutionType {
         		prefTable = pt;
         }
         
-        public  Vector<CandidateSolution> generatePopulation(int popSize) {
+        private  Vector<CandidateSolution> generatePopulation(int popSize) {
         	Vector<CandidateSolution> population =  new Vector<CandidateSolution>();
         	while(population.size() < popSize){
         		population.add(new CandidateSolution(prefTable));
@@ -21,7 +21,26 @@ public class GeneticSearch implements SolutionType {
         	return population;
         }
         
+        private  Vector<CandidateSolution> matePopulation ( Vector<CandidateSolution> population, int numToMate) {
+        	/*
+        	 * Select members to mate  
+        	 * choose mates,
+        	 * produce offspring
+        	 * mutate
+        	 * */
+        	Vector<CandidateSolution> alaphaMates = (Vector<CandidateSolution>) population.subList(0, numToMate) ;
+        	for(CandidateSolution alpha : alaphaMates){
+	        	for (CandidateSolution popMember : population){
+	        		produceOffspring(alpha, popMember);
+	        	}
+        	}
+        	
+        	return null;
+        }
         
+        private CandidateSolution produceOffspring(CandidateSolution parent1,CandidateSolution  parent2 ){
+        	return null;
+        }
         
         public void improveSolution() {
         	
