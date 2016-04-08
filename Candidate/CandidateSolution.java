@@ -25,6 +25,10 @@ public class CandidateSolution {
 		return solutionMap.get(studentName);
 	}
 	
+	public CandidateAssignment getAssignmentAtIndex(int i){
+		return solutionList.get(i);
+	}
+	
 	public CandidateAssignment getRandomAssignment(){
 		return solutionList.get(rnd.nextInt(solutionList.size()));	
 	}	
