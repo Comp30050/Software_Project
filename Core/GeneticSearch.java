@@ -1,12 +1,27 @@
 package Core;
 
+import java.util.Vector;
+import Candidate.CandidateSolution;
+import Data.PreferenceTable;
 import Interfaces.SolutionType;
 
 public class GeneticSearch implements SolutionType {
-	
-        public GeneticSearch() {
-
+		private PreferenceTable prefTable = null;
+		
+        public GeneticSearch(PreferenceTable pt) {
+        		prefTable = pt;
         }
+        
+        public  Vector<CandidateSolution> generatePopulation(int popSize) {
+        	Vector<CandidateSolution> population =  new Vector<CandidateSolution>();
+        	while(population.size() < popSize){
+        		population.add(new CandidateSolution(prefTable));
+        	}
+        	
+        	return population;
+        }
+        
+        
         
         public void improveSolution() {
         	
