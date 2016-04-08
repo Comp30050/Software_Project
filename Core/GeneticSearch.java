@@ -1,6 +1,8 @@
 package Core;
 
+import java.util.Random;
 import java.util.Vector;
+
 import Candidate.CandidateSolution;
 import Data.PreferenceTable;
 import Interfaces.SolutionType;
@@ -39,7 +41,18 @@ public class GeneticSearch implements SolutionType {
         }
         
         private CandidateSolution produceOffspring(CandidateSolution parent1,CandidateSolution  parent2 ){
-        	return null;}
+        	CandidateSolution child = new CandidateSolution(prefTable);
+        	Random rand = new Random();
+        	int x = rand.nextInt(1);
+        	x *= parent2.solutionSize()/2;
+        	
+        	for(int i = 0; i < x; i++){
+        		child.replaceAssignmentAt(i, parent1.getAssignmentAtIndex(i+x));
+        	}
+        	for(int i = x; i < parent2.solutionSize(); i++){
+        		child.replaceAssignmentAt(i, parent2.getAssignmentAtIndex(i-x));
+        	}
+        	return child;}
 
         public Vector<CandidateSolution> evaluateSolution(Vector<CandidateSolution> initial, int cut_off){
         	for(CandidateSolution cand: initial){

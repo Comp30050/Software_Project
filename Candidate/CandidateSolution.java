@@ -25,8 +25,17 @@ public class CandidateSolution {
 		return solutionMap.get(studentName);
 	}
 	
+	public CandidateAssignment replaceAssignmentAt(int i,CandidateAssignment replace){
+		solutionList.set(i, replace);
+		return solutionList.get(i);
+	}
+	
 	public CandidateAssignment getAssignmentAtIndex(int i){
 		return solutionList.get(i);
+	}
+	
+	public int solutionSize(){
+		return solutionList.size();
 	}
 	
 	public CandidateAssignment getRandomAssignment(){
