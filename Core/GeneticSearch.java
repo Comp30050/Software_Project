@@ -21,7 +21,19 @@ public class GeneticSearch implements SolutionType {
         	return population;
         }
         
-        
+        public Vector<CandidateSolution> evaluateSolution(Vector<CandidateSolution> initial, int cut_off){
+        	for(CandidateSolution cand: initial){
+        		for(CandidateSolution cand2: initial){
+        			if(cand2.getFitness() > cand.getFitness()){
+        				CandidateSolution temp;
+        				temp = cand;
+        				cand = cand2;
+        				cand2 = temp;
+        			}
+        		}
+        	}
+        	return (Vector<CandidateSolution>)initial.subList(0, cut_off);
+        }
         
         public void improveSolution() {
         	
