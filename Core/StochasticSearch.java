@@ -1,17 +1,19 @@
 package Core;
 
+import java.util.Random;
+
 import Interfaces.SolutionType;
 import Candidate.CandidateSolution;
 import Data.PreferenceTable;
 
 public class StochasticSearch implements SolutionType {
+		private static double E = 2.71828;
         private static int MAX_ALLOWED_ATTEMPTS;
         private int attempts = 0;
         private PreferenceTable pt;
         private boolean flag = false;
         private int runningTime;        //Worry about this later
-        private int temperature;
-
+        private int temperature;        
         //this is the solution we will be modifying to eventually obtain a final solution
         private CandidateSolution cs;
 
@@ -52,24 +54,38 @@ public class StochasticSearch implements SolutionType {
          * @return true to keep change, false to reject
          */
         private boolean keepRandomChange(CandidateSolution temp) {
-                boolean result = false;
-                //TODO: Ben, Implement. Using the Boltzmann function
-
-                return result;
+        		boolean result = false;
+        		Random generator = new Random();
+        		int rnd = generator.nextInt(100);
+        		if (temperature>temp.getEnergy()){
+        			result = true;
+        		}
+        		else if(temperature<=temp.getEnergy()){
+        			double changeEOverT = (temp.getEnergy() - temperature)/ temperature;
+        			double probability = 1/Math.pow(E , changeEOverT);
+        			probability = probability*100;
+        			if(rnd>probability){
+        				result = true;
+        			}
+        		}
+            	// Ben, Implement. Using the Boltzmann function
+        		return result;
         }
 
         public int getBestSolutionEnergy() {
+        		improveSolution();
                 //TODO: Ben, Implement
-                return 0;
+                return cs.getEnergy();
         }
 
-        public int getBestSolutionFitness() {
-                //TODO: Ben, Implement
-                return 0;
+        public int getBestSolutionFitness() {                
+        		improveSolution();        		
+        		//TODO: Ben, Implement        		
+                return cs.getFitness();
         }
 
-        public int getTotalRunningTime() {
+        public int getTotalRunningTime() {        		
                 //TODO: Ben, Implement
-                return 0;
+                return runningTime;
         }
 }
