@@ -1,4 +1,5 @@
 import Candidate.CandidateSolution;
+import Core.GeneticSearch;
 import Data.PreferenceTable;
 
 import java.io.*;
@@ -14,5 +15,8 @@ public class Main {
 		System.out.println("Solution energy: "+ testSolution.getEnergy());
 		System.out.println("Solution fitness: " + testSolution.getFitness());
 		
+		GeneticSearch test1 = new GeneticSearch(test);
+		CandidateSolution best = test1.generateSolution(100);
+		System.out.print(best.getFitness());
 	}
 }

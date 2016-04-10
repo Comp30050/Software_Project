@@ -1,10 +1,12 @@
 package Interfaces;
 
+import Candidate.CandidateSolution;
+
 public interface SolutionType {
         /**
          *
          */
-        void improveSolution();
+		CandidateSolution generateSolution(int maxIterations);
         /**
          *Inspects current CandidateSolution for given SolutionType
          * @return current CandidateSolutions energy

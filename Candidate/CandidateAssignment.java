@@ -16,6 +16,11 @@ public class CandidateAssignment {
 		currentAssignment = candidate.getRandomPreference();		
 	}
 	
+	public void setAssignment(String newAssignment){
+		previousAssignment = currentAssignment;
+		currentAssignment =newAssignment;
+	}
+	
 	public void undoChange(){
 		if (previousAssignment != null){
 			currentAssignment = previousAssignment;

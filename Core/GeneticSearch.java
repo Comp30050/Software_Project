@@ -1,10 +1,12 @@
 package Core;
 
+import java.util.Collections;
 import java.util.Random;
 import java.util.Vector;
 
 import Candidate.CandidateSolution;
 import Data.PreferenceTable;
+import Interfaces.SolutionComparator;
 import Interfaces.SolutionType;
 
 public class GeneticSearch implements SolutionType {
@@ -12,6 +14,7 @@ public class GeneticSearch implements SolutionType {
 		
         public GeneticSearch(PreferenceTable pt) {
         		prefTable = pt;
+        		
         }
         
         private  Vector<CandidateSolution> generatePopulation(int popSize) {
@@ -25,54 +28,79 @@ public class GeneticSearch implements SolutionType {
         
         private void mutate(CandidateSolution solution){
         	Random rng = new Random();
-        	if(rng.nextInt(1000) < 10)
+        	while(rng.nextInt(100) < 50)
         		solution.getRandomAssignment().randomizeAssignment();
   	
         }
         
-        private  Vector<CandidateSolution> matePopulation ( Vector<CandidateSolution> population, int numToMate) {
+        private  void matePopulation ( Vector<CandidateSolution> population, int numToMate) {
         	Vector<CandidateSolution> children = new Vector<CandidateSolution>();
-        	Vector<CandidateSolution> alaphaMates = (Vector<CandidateSolution>) population.subList(0, numToMate) ;
-        	for(CandidateSolution alpha : alaphaMates){
+        	Vector<CandidateSolution> alphaMates = new Vector<CandidateSolution>(population) ;
+        	alphaMates.setSize(numToMate);
+        	
+        	for(CandidateSolution alpha : alphaMates){
 	        	for (CandidateSolution popMember : population){
-	        		children.add(produceOffspring(alpha, popMember));
-	        		mutate(children.lastElement());
+	        		if(popMember != alpha){
+	        			children.add(produceOffspring(alpha, popMember));
+	        			mutate(children.lastElement());
+	        		}
 	        	}
-        	}
+        	}   	
         	population.addAll(0, children);
-        	return population;
         }
         
         private CandidateSolution produceOffspring(CandidateSolution parent1,CandidateSolution  parent2 ){
         	CandidateSolution child = new CandidateSolution(prefTable);
         	Random rand = new Random();
         	int x = rand.nextInt(1);
-        	x *= parent2.solutionSize()/2;
+        	x *= child.solutionSize()/2;
         	
         	for(int i = 0; i < x; i++){
-        		child.replaceAssignmentAt(i, parent1.getAssignmentAtIndex(i+x));
+        		//child.replaceAssignmentAt(i, parent1.getAssignmentAtIndex(i+x));
+        		String assign = parent1.getAssignmentAtIndex(i+x).getAssignment();
+        		child.getAssignmentAtIndex(i+x).setAssignment(assign);
         	}
         	for(int i = x; i < parent2.solutionSize(); i++){
-        		child.replaceAssignmentAt(i, parent2.getAssignmentAtIndex(i-x));
+        		//child.replaceAssignmentAt(i, parent2.getAssignmentAtIndex(i-x));
+        		String assign = parent1.getAssignmentAtIndex(i-x).getAssignment();
+        		child.getAssignmentAtIndex(i-x).setAssignment(assign);
         	}
         	return child;
         }
 
-        public Vector<CandidateSolution> evaluateSolution(Vector<CandidateSolution> initial, int cut_off){
-        	for(CandidateSolution cand: initial){
-        		for(CandidateSolution cand2: initial){
-        			if(cand2.getFitness() > cand.getFitness()){
-        				CandidateSolution temp;
-        				temp = cand;
-        				cand = cand2;
-        				cand2 = temp;
-        			}
-        		}
-        	}
-        	return (Vector<CandidateSolution>)initial.subList(0, cut_off);
+       private void cullPopulation(Vector<CandidateSolution> population, int cut_off){
+    	   Collections.sort(population, new SolutionComparator());
+//    	   System.out.println("-----------------------------------");
+//    	   for(CandidateSolution q : population){
+//    		   System.out.println(q.getFitness());
+//    	   }
+    	   population.setSize(cut_off);
+    	   //System.out.println("-----------------------------------");
+//    	   for(CandidateSolution q : population){
+//    		   System.out.println(q.getFitness());
+//    	   }
+//    	   System.out.println("-----------------------------------");
         }
         
-        public void improveSolution() {
+        public CandidateSolution generateSolution(int maxIterations) {
+        	int populationSize = 1000;
+        	int numberOfMates = 10;
+        	Vector<CandidateSolution> population = generatePopulation(populationSize*10);
+        	cullPopulation(population, populationSize);
+        	CandidateSolution bestSolution = population.firstElement();
+        	System.out.println(bestSolution.getFitness());
+        	
+        	for(int i = 0; i < maxIterations; i++ ){
+        		
+        		matePopulation(population, numberOfMates);
+        		cullPopulation(population, populationSize);
+//        		if (bestSolution.getFitness() <  population.firstElement().getFitness())
+//        			break;
+        			
+        		bestSolution = population.firstElement();	
+        		System.out.println(bestSolution.getFitness() + " = best sol num ->"+ i);
+        	}
+        	return bestSolution;
         	
         }
         /**
@@ -100,4 +128,7 @@ public class GeneticSearch implements SolutionType {
 			return 0;
         	
         }
+        
 }
+
+
