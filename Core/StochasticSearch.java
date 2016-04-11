@@ -22,22 +22,6 @@ public class StochasticSearch implements SolutionType {
                 temperature = 1000;      //Edit the temperature here
         }
 
-        /**
-         * Assign a new project to a random student within the HashMap in "cs" field
-         */
-        public void improveSolution() {
-                int prevEnergy;
-                if (!flag) {
-                        while (temperature > 0) {
-                                prevEnergy = this.cs.getEnergy();
-                                makeRandomChange(prevEnergy);
-                                temperature--;
-                                System.out.println("Curr Energy: "+this.cs.getEnergy());
-                        }
-                        flag = true;
-                }
-        }
-
         private void makeRandomChange(int prevEnergy) {
                 CandidateAssignment randomlyGottenAssignment = this.cs.getRandomAssignment();
                 this.cs.getAssignmentFor(
@@ -76,8 +60,19 @@ public class StochasticSearch implements SolutionType {
                 return result;
         }
 
+        //Ben maxIterations isn't needed, figure out a way to fix this
         public CandidateSolution generateSolution(int maxIterations) {
-                return null;
+                int prevEnergy;
+                if (!flag) {
+                        while (temperature > 0) {
+                                prevEnergy = this.cs.getEnergy();
+                                makeRandomChange(prevEnergy);
+                                temperature--;
+                                System.out.println("Curr Energy: "+this.cs.getEnergy());
+                        }
+                        flag = true;
+                }
+                return this.cs;
         }
 
         public int getBestSolutionEnergy() {
@@ -96,6 +91,6 @@ public class StochasticSearch implements SolutionType {
                 PreferenceTable pt = new PreferenceTable("Project allocation data.txt");
                 StochasticSearch stoch = new StochasticSearch(pt);
 
-                stoch.improveSolution();
+                stoch.generateSolution(50); // maxIterations is now redundant, talk to james about this
         }
 }
