@@ -1,50 +1,52 @@
 package Core;
 
 import java.util.Random;
+
+import Candidate.CandidateAssignment;
 import Interfaces.SolutionType;
 import Candidate.CandidateSolution;
 import Data.PreferenceTable;
 
 public class StochasticSearch implements SolutionType {
-        private static int MAX_ALLOWED_ATTEMPTS;
-        private int attempts = 0;
         private PreferenceTable pt;
         private boolean flag = false;
         private int runningTime;        //Worry about this later
-        private int temperature;
-        //this is the solution we will be modifying to eventually obtain a final solution
+        private static int temperature;
         private CandidateSolution cs;
 
-        public StochasticSearch(PreferenceTable pt, int max_attempts) {
-                MAX_ALLOWED_ATTEMPTS = max_attempts;
+        public StochasticSearch(PreferenceTable pt) {
                 runningTime = 0;
                 this.pt = pt;
                 this.cs = new CandidateSolution(this.pt);
-                temperature = cs.getEnergy();
 
+                temperature = 1000;      //Edit the temperature here
         }
 
         /**
          * Assign a new project to a random student within the HashMap in "cs" field
          */
         public void improveSolution() {
-                CandidateSolution tmp;
+                int prevEnergy;
                 if (!flag) {
-                        while (this.attempts < MAX_ALLOWED_ATTEMPTS) {
-                                tmp = this.cs;
-                                makeRandomChange(tmp);
-                                attempts++;
+                        while (temperature > 0) {
+                                prevEnergy = this.cs.getEnergy();
+                                makeRandomChange(prevEnergy);
+                                temperature--;
+                                System.out.println("Curr Energy: "+this.cs.getEnergy());
                         }
                         flag = true;
                 }
         }
 
-        private void makeRandomChange(CandidateSolution tmp) {
-                tmp.getRandomAssignment().randomizeAssignment();
-                if (keepRandomChange(tmp)) {
-                        System.out.println(cs.getEnergy() +": "+attempts);
-                        this.cs = tmp;
-                        this.temperature = cs.getEnergy();
+        private void makeRandomChange(int prevEnergy) {
+                CandidateAssignment randomlyGottenAssignment = this.cs.getRandomAssignment();
+                this.cs.getAssignmentFor(
+                        randomlyGottenAssignment.getStudent().getStudentName() ).randomizeAssignment();
+
+                //If change is rejected, revert it
+                if (!keepRandomChange(prevEnergy)) {
+                        this.cs.getAssignmentFor(
+                                randomlyGottenAssignment.getStudent().getStudentName() ).undoChange();
                 }
         }
 
@@ -54,24 +56,28 @@ public class StochasticSearch implements SolutionType {
          *
          * @return true to keep change, false to reject
          */
-        private boolean keepRandomChange(CandidateSolution temp) {
+        private boolean keepRandomChange(int prevEnergy) {
                 boolean result = false;
                 Random generator = new Random();
                 int rnd = generator.nextInt(100);
 
-                if (temperature > temp.getEnergy()) {
+                if (this.cs.getEnergy() < prevEnergy) {
                         result = true;
                 } else {
-                        double changeInEnergy = (temp.getEnergy() - temperature);
+                        double changeInEnergy = (this.cs.getEnergy() - prevEnergy);
                         double changeEOverT = changeInEnergy/temperature;
                         double probability = 1 / Math.exp(changeEOverT);
-                        probability = probability * 100;
-                        
-                        if (rnd <= (int)probability) {
+                        probability = 100 - (probability * 100);
+
+                        if (rnd >= (int)probability) {
                                 result = true;
                         }
                 }
                 return result;
+        }
+
+        public CandidateSolution generateSolution(int maxIterations) {
+                return null;
         }
 
         public int getBestSolutionEnergy() {
@@ -88,7 +94,7 @@ public class StochasticSearch implements SolutionType {
 
         public static void main(String[] args) {
                 PreferenceTable pt = new PreferenceTable("Project allocation data.txt");
-                StochasticSearch stoch = new StochasticSearch(pt, 1000);
+                StochasticSearch stoch = new StochasticSearch(pt);
 
                 stoch.improveSolution();
         }
