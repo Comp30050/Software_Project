@@ -6,7 +6,7 @@ public interface SolutionType {
         /**
          *
          */
-		CandidateSolution generateSolution(int maxIterations);
+		CandidateSolution generateSolution();
         /**
          *Inspects current CandidateSolution for given SolutionType
          * @return current CandidateSolutions energy

@@ -11,7 +11,7 @@ public class StochasticSearch implements SolutionType {
         private PreferenceTable pt;
         private boolean flag = false;
         private int runningTime;        //Worry about this later
-        private static int temperature;
+        private static double temperature;
         private CandidateSolution cs;
 
         public StochasticSearch(PreferenceTable pt) {
@@ -19,7 +19,7 @@ public class StochasticSearch implements SolutionType {
                 this.pt = pt;
                 this.cs = new CandidateSolution(this.pt);
 
-                temperature = 1000;      //Edit the temperature here
+                temperature = 100;      //Edit the temperature here
         }
 
         private void makeRandomChange(int prevEnergy) {
@@ -60,14 +60,14 @@ public class StochasticSearch implements SolutionType {
                 return result;
         }
 
-        //Ben maxIterations isn't needed, figure out a way to fix this
-        public CandidateSolution generateSolution(int maxIterations) {
+        
+        public CandidateSolution generateSolution() {
                 int prevEnergy;
                 if (!flag) {
                         while (temperature > 0) {
                                 prevEnergy = this.cs.getEnergy();
                                 makeRandomChange(prevEnergy);
-                                temperature--;
+                                temperature= temperature - 0.005;
                                 System.out.println("Curr Energy: "+this.cs.getEnergy());
                         }
                         flag = true;
@@ -91,6 +91,6 @@ public class StochasticSearch implements SolutionType {
                 PreferenceTable pt = new PreferenceTable("Project allocation data.txt");
                 StochasticSearch stoch = new StochasticSearch(pt);
 
-                stoch.generateSolution(50); // maxIterations is now redundant, talk to james about this
+                stoch.generateSolution(); 
         }
 }
