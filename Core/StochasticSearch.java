@@ -67,7 +67,7 @@ public class StochasticSearch implements SolutionType {
                         while (temperature > 0) {
                                 prevEnergy = this.cs.getEnergy();
                                 makeRandomChange(prevEnergy);
-                                temperature= temperature - 0.005;
+                                temperature= temperature - 0.007;						//reducing temperature slowly will prevent 'crystallisation'  and allow for the most effective search
                                 System.out.println("Curr Energy: "+this.cs.getEnergy());
                         }
                         flag = true;
