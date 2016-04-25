@@ -8,18 +8,25 @@ import Candidate.CandidateSolution;
 import Data.PreferenceTable;
 
 public class StochasticSearch implements SolutionType {
+        private int iterations;
         private PreferenceTable pt;
         private boolean flag = false;
         private int runningTime;        //Worry about this later
         private static double temperature;
+        private double decrementVal;
         private CandidateSolution cs;
 
+        public StochasticSearch() {
+        }
+
         public StochasticSearch(PreferenceTable pt) {
+                iterations = 100000;
                 runningTime = 0;
                 this.pt = pt;
                 this.cs = new CandidateSolution(this.pt);
 
                 temperature = 100;      //Edit the temperature here
+                this.decrementVal = temperature/iterations;
         }
 
         private void makeRandomChange(int prevEnergy) {
@@ -47,15 +54,14 @@ public class StochasticSearch implements SolutionType {
 
                 if (this.cs.getEnergy() < prevEnergy) {
                         result = true;
-                } else {
-                        double changeInEnergy = (this.cs.getEnergy() - prevEnergy);
-                        double changeEOverT = changeInEnergy/temperature;
-                        double probability = 1 / Math.exp(changeEOverT);
-                        probability = 100 - (probability * 100);
+                }
+                double changeInEnergy = (this.cs.getEnergy() - prevEnergy);
+                double changeEOverT = changeInEnergy/temperature;
+                double probability = 1 / Math.exp(changeEOverT);
+                probability = 100 - (probability * 100);
 
-                        if (rnd >= (int)probability) {
-                                result = true;
-                        }
+                if (rnd >= (int)probability) {
+                        result = true;
                 }
                 return result;
         }
@@ -67,12 +73,15 @@ public class StochasticSearch implements SolutionType {
                         while (temperature > 0) {
                                 prevEnergy = this.cs.getEnergy();
                                 makeRandomChange(prevEnergy);
-                                temperature= temperature - 0.007;						//reducing temperature slowly will prevent 'crystallisation'  and allow for the most effective search
-                                System.out.println("Curr Energy: "+this.cs.getEnergy());
+                                temperature= temperature - decrementVal;
                         }
                         flag = true;
                 }
                 return this.cs;
+        }
+
+        public CandidateSolution generateSolution(int maxIterations) {
+                return null;
         }
 
         public int getBestSolutionEnergy() {
@@ -87,10 +96,4 @@ public class StochasticSearch implements SolutionType {
                 return runningTime;
         }
 
-        public static void main(String[] args) {
-                PreferenceTable pt = new PreferenceTable("Project allocation data.txt");
-                StochasticSearch stoch = new StochasticSearch(pt);
-
-                stoch.generateSolution(); 
-        }
 }

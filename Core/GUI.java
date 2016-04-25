@@ -1,94 +1,145 @@
 package Core;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GUI extends JFrame implements ActionListener{
+public class GUI{
+        private JFrame frame;
         private JLabel background;
-        private JButton exitButton;
-        private MouseListen ml;
-        private JTextArea consoleOutput;
-        private String algorithm;
+        private String fileName;
+        private FrontEnd f;
 
-        public GUI(Core c) {
-                super("Comp30050 - Software Enginnering (Map Students to projects)");
-                consoleOutput = new JTextArea();
+        public GUI(FrontEnd f) {
+                this.f = f;
+                frame = new JFrame("COMP30050 - Software Enginnering");
                 background = new JLabel();
-                exitButton = new JButton();
-                ml = new MouseListen(c);
 
                 this.drawBackground();
-                this.addComboBox();
-                this.makeConsoleDisplay();
+                this.getFile();
 
                 this.buildFrame();
-
-                //updateConsoleDisplay("Hi Gary");
         }
 
         private void drawBackground() {
+                background.setLayout(new FlowLayout());
                 background.setLocation(0, 0);
-                background.setSize(700, 400);
+                background.setSize(400, 200);
+        }
 
-                exitButton = new JButton("Exit");
-                exitButton.setLocation(630, 335);
-                exitButton.setSize(55, 25);
-                exitButton.addMouseListener(ml);
-                background.add(exitButton);
+        private void getFile() {
+                JButton getFile = new JButton("Open File");
+                getFile.setSize(120, 25);
+                getFile.setLocation(5,5);
+                frame.add(getFile, BorderLayout.PAGE_START);
+                getFile.addActionListener(new ActionListener() {
+
+                        public void actionPerformed(ActionEvent e) {
+                                JFileChooser fc = new JFileChooser();
+                                fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+                                int returnVal = fc.showOpenDialog(getFile);
+
+                                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                        fileName = fc.getSelectedFile().getName();
+                                        f.initializePrefTable(fileName);
+                                }
+
+                                addAlgorithmButtons();
+
+                        }
+                });
+                getFile.setVisible(true);
+        }
+
+        private void addAlgorithmButtons() {
+                JPanel algPane = new JPanel();
+                algPane.setLayout(new FlowLayout());
+                algPane.setSize(350,30);
+                algPane.setLocation(50,50);
+
+                JButton SAButton = new JButton("Simulated Annealing");
+                SAButton.setSize(150,25);
+                algPane.add(SAButton);
+                JPanel algOptions = new JPanel(new FlowLayout());
+
+                SAButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                                algOptions.removeAll();
+
+                                JButton acceptInput = new JButton("Accept & Run");
+                                algOptions.setLocation(50,50);
+                                acceptInput.setSize(125,25);
+                                acceptInput.setLocation(50, 85);
+                                algOptions.setSize(400,150);
+
+                                acceptInput.addActionListener(new ActionListener() {
+                                        public void actionPerformed(ActionEvent e) {
+                                                f.initializeSearch(new StochasticSearch(f.pt));
+                                                exitAndSaveButton();
+                                                frame.repaint();
+                                        }
+                                });
+                                frame.add(acceptInput);
+                                frame.repaint();
+                                acceptInput.setVisible(true);
+                        }
+                });
+
+                JButton GENButton = new JButton("Genetic");
+                GENButton.setSize(150,25);
+                GENButton.setLocation(160, 0);
+                algPane.add(GENButton);
+                GENButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                                algOptions.removeAll();
+                                JButton acceptInput = new JButton("Accept & Run");
+                                algOptions.setLocation(50,50);
+                                acceptInput.setSize(125,25);
+                                acceptInput.setLocation(50, 85);
+                                algOptions.setSize(400,30);
+
+                                acceptInput.addActionListener(new ActionListener() {
+                                        public void actionPerformed(ActionEvent e) {
+                                                f.initializeSearch(new GeneticSearch(f.pt));
+                                                exitAndSaveButton();
+                                                frame.repaint();
+                                        }
+                                });
+                                frame.add(GENButton);
+                                frame.repaint();
+                                acceptInput.setVisible(true);
+                        }
+                });
+                GENButton.setVisible(true);
+                algPane.setVisible(true);
+                frame.add(algPane);
+                frame.repaint();
+        }
+
+        private void exitAndSaveButton() {
+                JButton exitButton = new JButton("Exit & Save");
+                exitButton.setLocation(265, 135);
+                exitButton.setSize(120, 25);
+                frame.add(exitButton, BorderLayout.SOUTH);
+                frame.repaint();
+                exitButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                                f.saveFileToOutput();
+                                frame.dispose();
+                        }
+                });
                 exitButton.setVisible(true);
-        }
-
-        private void addComboBox() {
-
-                //create ComboBox and set default algorithm to be Simulated Annealing
-                JComboBox algorithmsBox = new JComboBox(new String[]{"Simulated Annealing", "Genetic"});
-                algorithmsBox.setSelectedIndex(0);
-                algorithm = (String) algorithmsBox.getItemAt(0);        //Set default algorithm
-                algorithmsBox.setSize(150,25);
-                algorithmsBox.addActionListener(this);
-                algorithmsBox.setLocation(50,50);
-
-                background.add(algorithmsBox);
-                algorithmsBox.setVisible(true);
-        }
-
-        private void makeConsoleDisplay() {
-                consoleOutput.setLocation(50, 90);
-                consoleOutput.setSize(300, 100);
-                consoleOutput.setEditable(false);
-                background.add(consoleOutput);
-                exitButton.setVisible(true);
-        }
-
-        public void updateConsoleDisplay(String toDisplay) {
-                consoleOutput.append(toDisplay);
-                background.add(consoleOutput);
-                consoleOutput.setVisible(true);
         }
 
         public void buildFrame() {
-                this.setSize(700, 400);
-                this.setResizable(false);
-                this.setLocationRelativeTo(null);
-                this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLayout(new BorderLayout());
+                frame.setSize(400, 200);
+                frame.setResizable(false);
+                frame.setLocationRelativeTo(null);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-                this.add(background);
-                this.setVisible(true);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox)e.getSource();
-                String alg = (String)cb.getSelectedItem();
-
-                algorithm = alg;
-        }
-
-        public String getAlgorithm() {
-                return this.algorithm;
-        }
-
-        public JButton getExitButton() {
-                return exitButton;
+                frame.setVisible(true);
         }
 }
