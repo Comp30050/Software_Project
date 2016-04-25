@@ -49,23 +49,19 @@ public class GeneticSearch implements SolutionType {
                 population.addAll(0, children);
         }
 
-        private CandidateSolution produceOffspring(CandidateSolution parent1, CandidateSolution parent2) {
-                CandidateSolution child = new CandidateSolution(prefTable);
-                Random rand = new Random();
-                int x = rand.nextInt(1);
-                x *= child.solutionSize() / 2;
-
-                for (int i = 0; i < x; i++) {
-                        //child.replaceAssignmentAt(i, parent1.getAssignmentAtIndex(i+x));
-                        String assign = parent1.getAssignmentAtIndex(i + x).getAssignment();
-                        //child.getAssignmentAtIndex(i + x).setAssignment(assign);
-                }
-                for (int i = x; i < parent2.solutionSize(); i++) {
-                        //child.replaceAssignmentAt(i, parent2.getAssignmentAtIndex(i-x));
-                        String assign = parent1.getAssignmentAtIndex(i - x).getAssignment();
-                        //child.getAssignmentAtIndex(i - x).setAssignment(assign);
-                }
-                return child;
+        private CandidateSolution produceOffspring(CandidateSolution parent1,CandidateSolution  parent2 ){
+        	CandidateSolution child = new CandidateSolution(prefTable);
+        	Random rand = new Random();
+        	String assign;
+        	for(int j = 0; j < parent1.solutionSize(); j++){
+        		int x = rand.nextInt(1);
+        		if(x == 0)
+        			assign = parent1.getAssignmentAtIndex(j).getAssignment();
+        		else
+        			assign = parent2.getAssignmentAtIndex(j).getAssignment();
+        		child.getAssignmentAtIndex(j).setAssignment(assign);
+        	}
+        	return child;
         }
 
         private void cullPopulation(Vector<CandidateSolution> population, int cut_off) {
@@ -82,15 +78,14 @@ public class GeneticSearch implements SolutionType {
 //    	   System.out.println("-----------------------------------");
         }
 
-        public CandidateSolution generateSolution(int maxIterations) {
-                int populationSize = 1000;
-                int numberOfMates = 10;
+        public CandidateSolution generateSolution() {
+                int populationSize = 1000, maxIterations = 100,numberOfMates = 10;
                 Vector<CandidateSolution> population = generatePopulation(populationSize * 10);
                 cullPopulation(population, populationSize);
                 CandidateSolution bestSolution = population.firstElement();
                 System.out.println(bestSolution.getFitness());
 
-                for (int i = 0; i < maxIterations; i++) {
+                for (int i = 0; i <maxIterations ; i++) {
 
                         matePopulation(population, numberOfMates);
                         cullPopulation(population, populationSize);
