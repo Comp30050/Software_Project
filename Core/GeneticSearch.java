@@ -82,15 +82,15 @@ public class GeneticSearch implements SolutionType {
 //    	   System.out.println("-----------------------------------");
         }
         
-        public CandidateSolution generateSolution(int maxIterations) {
-        	int populationSize = 1000;
-        	int numberOfMates = 10;
+        public CandidateSolution generateSolution() {
+        	int populationSize = 100;
+        	int numberOfMates = 5;
         	Vector<CandidateSolution> population = generatePopulation(populationSize*10);
         	cullPopulation(population, populationSize);
         	CandidateSolution bestSolution = population.firstElement();
         	System.out.println(bestSolution.getFitness());
         	
-        	for(int i = 0; i < maxIterations; i++ ){
+        	for(int i = 0; i < 100; i++ ){
         		
         		matePopulation(population, numberOfMates);
         		cullPopulation(population, populationSize);
@@ -99,6 +99,7 @@ public class GeneticSearch implements SolutionType {
         			
         		bestSolution = population.firstElement();	
         		System.out.println(bestSolution.getFitness() + " = best sol num ->"+ i);
+        		System.out.println(bestSolution.getEnergy() + " = best sol num ->"+ i);
         	}
         	return bestSolution;
         	

@@ -62,7 +62,7 @@ public class Core {
                         if(algorithm.equalsIgnoreCase("Simulated Annealing")) {
                                 cs = ss.generateSolution();
                         } else {
-                                cs = gs.generateSolution(MAX_ITERATIONS);
+                                cs = gs.generateSolution();
                         }
                 }
 
