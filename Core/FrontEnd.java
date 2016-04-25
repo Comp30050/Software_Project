@@ -34,7 +34,7 @@ public class FrontEnd {
                 FileWriter fw;
                 try {
                         fw = new FileWriter("Generated_student_to_project_mapping.tsv");
-                        fw.append("Student Name:\tStudent Assignment:\tStudent Energy:(1-100)\n\n");
+                        fw.append("Student Name:\tStudent Assignment:\tStudent Energy: 1[low]-100[high]\n\n");
                         for(int i=0; i < cs.solutionSize(); i++) {
                                 CandidateAssignment studAssignment = cs.getAssignmentAtIndex(i);
 

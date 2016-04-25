@@ -7,31 +7,22 @@ import java.awt.event.ActionListener;
 
 public class GUI{
         private JFrame frame;
-        private JLabel background;
+        private JLabel label;
         private String fileName;
         private FrontEnd f;
 
         public GUI(FrontEnd f) {
+                label = new JLabel();
                 this.f = f;
                 frame = new JFrame("COMP30050 - Software Enginnering");
-                background = new JLabel();
 
-                this.drawBackground();
                 this.getFile();
-
                 this.buildFrame();
         }
-
-        private void drawBackground() {
-                background.setLayout(new FlowLayout());
-                background.setLocation(0, 0);
-                background.setSize(400, 200);
-        }
-
         private void getFile() {
                 JButton getFile = new JButton("Open File");
                 getFile.setSize(120, 25);
-                getFile.setLocation(5,5);
+                getFile.setLocation(20,5);
                 frame.add(getFile, BorderLayout.PAGE_START);
                 getFile.addActionListener(new ActionListener() {
 
@@ -39,90 +30,117 @@ public class GUI{
                                 JFileChooser fc = new JFileChooser();
                                 fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-                                int returnVal = fc.showOpenDialog(getFile);
-
-                                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                        fileName = fc.getSelectedFile().getName();
-                                        f.initializePrefTable(fileName);
+                                //Only progress to showing alg buttons if valid file passed
+                                try {
+                                        int returnVal = fc.showOpenDialog(getFile);
+                                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                                fileName = fc.getSelectedFile().getName();
+                                                f.initializePrefTable(fileName);
+                                        }
+                                        addAlgorithmButtons();
+                                } catch(Exception exp){
+                                        label.setSize(200,30);
+                                        label.setLocation(50,130);
+                                        label.setText("Error, file couldn't be opened :(");
+                                        frame.add(label);
+                                        label.setVisible(true);
+                                        frame.repaint();
                                 }
-
-                                addAlgorithmButtons();
-
                         }
                 });
                 getFile.setVisible(true);
         }
 
+        //Nested buttons so that the next operation can only be carried out if prior required settings are set
         private void addAlgorithmButtons() {
-                JPanel algPane = new JPanel();
-                algPane.setLayout(new FlowLayout());
-                algPane.setSize(350,30);
-                algPane.setLocation(50,50);
+                JButton SAButton = new JButton("Run Simulated Annealing");
+                final JButton SAacceptInput = new JButton("Accept algorithm & Run");
+                final JButton GENacceptInput = new JButton("Accept algorithm & Run");
+                SAButton.setSize(175,50);
+                SAButton.setLocation(20,40);
 
-                JButton SAButton = new JButton("Simulated Annealing");
-                SAButton.setSize(150,25);
-                algPane.add(SAButton);
-                JPanel algOptions = new JPanel(new FlowLayout());
+                frame.add(SAButton);
+                label.setSize(275,30);
+                label.setLocation(50,130);
 
                 SAButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                                algOptions.removeAll();
+                                SAacceptInput.setSize(175,25);
+                                SAacceptInput.setLocation(20, 100);
 
-                                JButton acceptInput = new JButton("Accept & Run");
-                                algOptions.setLocation(50,50);
-                                acceptInput.setSize(125,25);
-                                acceptInput.setLocation(50, 85);
-                                algOptions.setSize(400,150);
-
-                                acceptInput.addActionListener(new ActionListener() {
+                                SAacceptInput.addActionListener(new ActionListener() {
                                         public void actionPerformed(ActionEvent e) {
                                                 f.initializeSearch(new StochasticSearch(f.pt));
+                                                frame.remove(label);
+                                                label.setText("Done! "+getEnergyRating());
+                                                frame.add(label);
                                                 exitAndSaveButton();
-                                                frame.repaint();
                                         }
                                 });
-                                frame.add(acceptInput);
+                                //Removes the other buttons accept button as they're overlayed, #hack
+                                frame.remove(GENacceptInput);
+                                frame.add(SAacceptInput);
                                 frame.repaint();
-                                acceptInput.setVisible(true);
+                                label.setVisible(true);
+                                SAacceptInput.setVisible(true);
                         }
                 });
 
-                JButton GENButton = new JButton("Genetic");
-                GENButton.setSize(150,25);
-                GENButton.setLocation(160, 0);
-                algPane.add(GENButton);
+                //Allows for two line buttons, #Hack
+                String twoLineText = "Run Genetic algorithm\n(~40secs to run)";
+                JButton GENButton = new JButton("<html>" + twoLineText.replaceAll("\\n", "<br>") + "</html>");
+                GENButton.setSize(175, 50);
+                GENButton.setLocation(200, 40);
+                frame.add(GENButton);
+
                 GENButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                                algOptions.removeAll();
-                                JButton acceptInput = new JButton("Accept & Run");
-                                algOptions.setLocation(50,50);
-                                acceptInput.setSize(125,25);
-                                acceptInput.setLocation(50, 85);
-                                algOptions.setSize(400,30);
+                                GENacceptInput.setSize(175,25);
+                                GENacceptInput.setLocation(20, 100);
 
-                                acceptInput.addActionListener(new ActionListener() {
+                                GENacceptInput.addActionListener(new ActionListener() {
                                         public void actionPerformed(ActionEvent e) {
                                                 f.initializeSearch(new GeneticSearch(f.pt));
+
+                                                frame.remove(label);
+                                                label.setText("Done! "+getEnergyRating());
+                                                frame.add(label);
                                                 exitAndSaveButton();
-                                                frame.repaint();
                                         }
                                 });
-                                frame.add(GENButton);
+                                //Removes the other buttons accept button as they're overlayed, #hack
+                                frame.remove(SAacceptInput);
+                                frame.add(GENacceptInput);
                                 frame.repaint();
-                                acceptInput.setVisible(true);
+                                label.setVisible(true);
+                                GENacceptInput.setVisible(true);
                         }
                 });
                 GENButton.setVisible(true);
-                algPane.setVisible(true);
-                frame.add(algPane);
+                SAButton.setVisible(true);
                 frame.repaint();
         }
+        private String getEnergyRating(){
+                String energyRating = "";
 
+                if(f.cs.getEnergy() <= 250) {
+                        energyRating = "Excellent mapping generated..";
+                } else if(f.cs.getEnergy() <= 300 ) {
+                        energyRating = "Good mapping generated..";
+                } else if(f.cs.getEnergy() <= 400) {
+                        energyRating = "Adequate mapping generated..";
+                } else {
+                        energyRating = "Poor mapping generated..";
+                }
+                return energyRating;
+        }
+
+        //Only display the Save button if at least one algorithm was run
         private void exitAndSaveButton() {
-                JButton exitButton = new JButton("Exit & Save");
+                JButton exitButton = new JButton("Save & Exit");
                 exitButton.setLocation(265, 135);
                 exitButton.setSize(120, 25);
-                frame.add(exitButton, BorderLayout.SOUTH);
+                frame.add(exitButton);
                 frame.repaint();
                 exitButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
@@ -139,7 +157,6 @@ public class GUI{
                 frame.setResizable(false);
                 frame.setLocationRelativeTo(null);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
                 frame.setVisible(true);
         }
 }
