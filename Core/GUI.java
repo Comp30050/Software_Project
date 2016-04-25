@@ -54,8 +54,8 @@ public class GUI{
         //Nested buttons so that the next operation can only be carried out if prior required settings are set
         private void addAlgorithmButtons() {
                 JButton SAButton = new JButton("Run Simulated Annealing");
-                final JButton SAacceptInput = new JButton("Accept algorithm & Run");
-                final JButton GENacceptInput = new JButton("Accept algorithm & Run");
+                final JButton SAacceptInput = new JButton("Accept SA & Run");
+                final JButton GENacceptInput = new JButton("Accept Genetic & Run");
                 SAButton.setSize(175,50);
                 SAButton.setLocation(20,40);
 
