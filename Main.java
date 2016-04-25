@@ -18,12 +18,12 @@ public class Main {
 		
 		GeneticSearch test1 = new GeneticSearch(test);
 		CandidateSolution best = test1.generateSolution();
-		System.out.print(best.getFitness());
+		System.out.println(best.getFitness());
 		
 		
 		
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
-		System.out.println(totalTime);
+		System.out.println(totalTime/1000);
 	}
 }
