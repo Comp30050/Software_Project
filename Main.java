@@ -8,6 +8,7 @@ public class Main {
 
 	//loads test file to a table and prints for testing purposes 
 	public static void main(String[] args) {
+		long startTime = System.currentTimeMillis();
 		String filename = "Data"+File.separator+"Project_allocation_data.tsv";
 		PreferenceTable test = new PreferenceTable(filename);
 		test.fillPreferencesOfAll(10);
@@ -18,5 +19,11 @@ public class Main {
 		GeneticSearch test1 = new GeneticSearch(test);
 		CandidateSolution best = test1.generateSolution();
 		System.out.print(best.getFitness());
+		
+		
+		
+		long endTime   = System.currentTimeMillis();
+		long totalTime = endTime - startTime;
+		System.out.println(totalTime);
 	}
 }
