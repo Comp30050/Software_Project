@@ -26,7 +26,7 @@ public class FrontEnd {
         }
 
         public void initializeSearch(GeneticSearch gs) {
-                this.cs = gs.generateSolution(10000);
+                this.cs = gs.generateSolution();
                 System.out.println("Energy :D ="+gs.getBestSolutionEnergy());
         }
 
