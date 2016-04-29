@@ -27,7 +27,7 @@ public class GeneticAlgorithm implements SolutionType {
 
         private void mutate(CandidateSolution solution) {
                 Random rng = new Random();
-                while (rng.nextInt(100) < 75)
+                while (rng.nextInt(100) < 50)
                         solution.getRandomAssignment().randomizeAssignment();
         }
 
@@ -36,11 +36,11 @@ public class GeneticAlgorithm implements SolutionType {
                 Vector<CandidateSolution> alphaMates = new Vector<CandidateSolution>(population);
                 alphaMates.setSize(numToMate);
                 	
-	                for (CandidateSolution alpha : alphaMates) {
-	                        for (CandidateSolution popMember : population) {
-	                                children.add(produceOffspring(alpha, popMember));
-	                        }
-	                }
+                for (CandidateSolution alpha : alphaMates) {
+                        for (CandidateSolution popMember : population) {
+                                children.add(produceOffspring(alpha, popMember));
+                        }
+                }
                 population.addAll(0, children);
         }
 
@@ -67,23 +67,21 @@ public class GeneticAlgorithm implements SolutionType {
         }
 
         public CandidateSolution generateSolution() {
-                int populationSize = 1000, maxIterations = 150,numberOfMates = 10, count = 0;
+                int populationSize = 1000, maxIterations = 150,numberOfMates = 10, countSinceLastImprovement = 0;
                 Vector<CandidateSolution> population = generatePopulation(populationSize * 10);
                 cullPopulation(population, populationSize);
                 geneticSolution = population.firstElement();
-                System.out.println(geneticSolution.getFitness());
                 
-                for (int i = 0; i <maxIterations && count < 20 ; i++) {
+                for (int i = 0; i <maxIterations && countSinceLastImprovement < 20 ; i++) {
 
                         matePopulation(population, numberOfMates);
                         cullPopulation(population, populationSize);
         		if (geneticSolution.getFitness() >=  population.firstElement().getFitness())
-        			count ++;
+        			countSinceLastImprovement ++;
         		else
-        			count = 0;
+        			countSinceLastImprovement = 0;
 
         		geneticSolution = population.firstElement();
-                        System.out.println(geneticSolution.getFitness() + " = best sol num ->" + i);
                 }
                 return geneticSolution;
         }

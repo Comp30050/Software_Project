@@ -22,12 +22,10 @@ public class FrontEnd {
                 pt = new PreferenceTable(file);
         }
 
-
         //Polymorphically call generate solution
         public void initializeSearch(SolutionType ss) {
                 this.cs = ss.generateSolution();
         }
-
 
         public void saveFileToOutput() {
                 FileWriter fw;
