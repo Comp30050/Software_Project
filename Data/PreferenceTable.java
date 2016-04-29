@@ -5,7 +5,7 @@ import java.util.*;
 
 public class PreferenceTable {
 	private Vector<Vector<String>> table = null;
-	private	HashMap<String, StudentEntry> studentLookup =	new	HashMap<String, StudentEntry>();	
+	private	HashMap<String, StudentEntry> studentLookup =new HashMap<>();
 	private Random rnd = new Random();
 	
 	public PreferenceTable(String filename){

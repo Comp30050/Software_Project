@@ -4,9 +4,10 @@ import Candidate.CandidateSolution;
 
 public interface SolutionType {
         /**
-         *
+         *Generates a candidate solution for the running algorithm.
+         * @return The final candidate solution
          */
-		CandidateSolution generateSolution();
+        CandidateSolution generateSolution();
         /**
          *Inspects current CandidateSolution for given SolutionType
          * @return current CandidateSolutions energy
@@ -18,9 +19,4 @@ public interface SolutionType {
          * @return current CandidateSolutions fitness
          */
         int getBestSolutionFitness();
-
-        /**
-         *@return running time to get best CandidateSolution
-         */
-        int getTotalRunningTime();
 }

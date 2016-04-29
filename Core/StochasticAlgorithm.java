@@ -7,28 +7,39 @@ import Interfaces.SolutionType;
 import Candidate.CandidateSolution;
 import Data.PreferenceTable;
 
-public class StochasticSearch implements SolutionType {
+public class StochasticAlgorithm implements SolutionType {
         private int iterations;
         private PreferenceTable pt;
-        private boolean flag = false;
-        private int runningTime;        //Worry about this later
         private static double temperature;
         private double decrementVal;
         private CandidateSolution cs;
 
-        public StochasticSearch() {
+        public StochasticAlgorithm() {
         }
 
-        public StochasticSearch(PreferenceTable pt) {
-                iterations = 100000;
-                runningTime = 0;
+        public StochasticAlgorithm(PreferenceTable pt) {
+                iterations = 100000;    //Decides how many iterations are done, i.e how many random changes are done
                 this.pt = pt;
                 this.cs = new CandidateSolution(this.pt);
-
-                temperature = 100;      //Edit the temperature here
+                temperature = 100;
                 this.decrementVal = temperature/iterations;
         }
 
+        public CandidateSolution generateSolution() {
+                int prevEnergy;
+                while (temperature > 0) {
+                        prevEnergy = this.cs.getEnergy();
+                        makeRandomChange(prevEnergy);   //Makes a random change to the current CandidateSolution
+                        temperature= temperature - decrementVal;
+                }
+                return this.cs;
+        }
+
+        /**
+         * Randomly gets an assignment from the candidate solution and changes the current students assigned project.
+         * If the call to the KeepRandomChange() method yields false then the change is reverted.
+         * @param prevEnergy Energy of previous candidate solution.
+         */
         private void makeRandomChange(int prevEnergy) {
                 CandidateAssignment randomlyGottenAssignment = this.cs.getRandomAssignment();
                 this.cs.getAssignmentFor(
@@ -53,35 +64,17 @@ public class StochasticSearch implements SolutionType {
                 int rnd = generator.nextInt(100);
 
                 if (this.cs.getEnergy() < prevEnergy) {
-                        result = true;
+                        return true;
                 }
                 double changeInEnergy = (this.cs.getEnergy() - prevEnergy);
-                double changeEOverT = changeInEnergy/temperature;
+                double changeEOverT = changeInEnergy / temperature;
                 double probability = 1 / Math.exp(changeEOverT);
                 probability = 100 - (probability * 100);
 
-                if (rnd >= (int)probability) {
+                if (rnd >= (int) probability) {
                         result = true;
                 }
                 return result;
-        }
-
-        
-        public CandidateSolution generateSolution() {
-                int prevEnergy;
-                if (!flag) {
-                        while (temperature > 0) {
-                                prevEnergy = this.cs.getEnergy();
-                                makeRandomChange(prevEnergy);
-                                temperature= temperature - decrementVal;
-                        }
-                        flag = true;
-                }
-                return this.cs;
-        }
-
-        public CandidateSolution generateSolution(int maxIterations) {
-                return null;
         }
 
         public int getBestSolutionEnergy() {
@@ -91,9 +84,4 @@ public class StochasticSearch implements SolutionType {
         public int getBestSolutionFitness() {
                 return cs.getFitness();
         }
-
-        public int getTotalRunningTime() {
-                return runningTime;
-        }
-
 }

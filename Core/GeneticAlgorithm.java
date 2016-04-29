@@ -9,11 +9,11 @@ import Data.PreferenceTable;
 import Interfaces.SolutionComparator;
 import Interfaces.SolutionType;
 
-public class GeneticSearch implements SolutionType {
+public class GeneticAlgorithm implements SolutionType {
         private PreferenceTable prefTable = null;
         private CandidateSolution geneticSolution= null;
 
-        public GeneticSearch(PreferenceTable pt) {
+        public GeneticAlgorithm(PreferenceTable pt) {
                 prefTable = pt;
         }
 
@@ -105,15 +105,6 @@ public class GeneticSearch implements SolutionType {
         public int getBestSolutionFitness() {
                 return geneticSolution.getFitness();
         }
-
-        /**
-         * @return running time to get best CandidateSolution
-         */
-        public int getTotalRunningTime() {
-                return 0;
-
-        }
-
 }
 
 
